@@ -36,6 +36,16 @@ type collectorContextImpl[In, Out any] struct {
 	hasValue      bool
 }
 
+// CurrentSize implements the CurrentSize method of CollectorContext.
+func (c *collectorContextImpl[In, Out]) CurrentSize() int {
+	return len(c.resultGetter())
+}
+
+// Size implements the Size method of CollectorContext.
+func (c *collectorContextImpl[In, Out]) Size() int {
+	return len(c.sliceGetter())
+}
+
 // Slice implements the Slice method of CollectorContext.
 func (c *collectorContextImpl[In, Out]) Slice() []In {
 	return c.sliceGetter()
@@ -101,6 +111,10 @@ type CollectorContext[In, Out any] interface {
 	Continue(errs ...error)
 	// Stop signals to terminate the collection process immediately.
 	Stop(errs ...error)
+	// Size returns the size of the original input slice.
+	Size() int
+	// CurrentSize returns the size of the current result slice.
+	CurrentSize() int
 }
 
 // Collect applies a collection operation on the input slice based on the provided context,
